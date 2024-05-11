@@ -122,8 +122,7 @@ celerybeat.pid
 *.sage.py
 
 # Application Files 
-DataFile.xlsx
-Template_competition_analytics.xlsx
+*.xlsx
 # Environments
 .env
 .venv

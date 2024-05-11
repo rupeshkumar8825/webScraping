@@ -63,9 +63,7 @@ def FetchDataByAutomation(wait, driver, automationResultDict, courseLink):
     courseType = courseLink[1].strip();
     print("The course type is \n", courseType);
     
-    # waitTime = randrange(10);
-    # print("Waiting for ", waitTime);
-    # time.sleep(waitTime);
+
 
     # WRITING THE AUTOMATION CODE TO FETCH THE LAST UPDATED VALUE OF THE COURSE 
     wait.until(
@@ -75,11 +73,7 @@ def FetchDataByAutomation(wait, driver, automationResultDict, courseLink):
     print("The value of the last-update-date is " + lastUpdatedCourseDate, "\n\n");
     automationResultDict["Course Last Updated Date"] = lastUpdatedCourseDate;
 
-    # waitTime = randrange(10);
-    # print("Waiting for ", waitTime);
-    # time.sleep(waitTime);
 
-    # time.sleep(randrange(10));
 
     #WRITING THE CODE TO FETCH THE VALUE OF COURSE SALE COUNT 
     wait.until(
@@ -89,24 +83,15 @@ def FetchDataByAutomation(wait, driver, automationResultDict, courseLink):
     print("The value of the courseSaleCount is " + courseSaleCount, "\n\n");
     automationResultDict["Course Sale Count"] = courseSaleCount;
 
-    # waitTime = randrange(10);
-    # print("Waiting for ", waitTime);
-    # time.sleep(waitTime);
-
-
-
+   
     #WRITING THE CODE TO FETCH THE COURSE REVIEW COUNT 
     wait.until(
         expectedConditions.presence_of_element_located((By.XPATH, "//div[contains(@class, 'clp-lead__element-item--row')]/a/span[2]"))
     );
-    numberOfRatings = driver.find_element(By.XPATH, "//div[contains(@class, 'clp-lead__element-item--row')]/a/span[2]").text;
-    print("The value of the numberOfRatings is " + numberOfRatings, "\n\n\n\n");
-    automationResultDict["Course Review Count"] = numberOfRatings;
+    courseReviewCounts = driver.find_element(By.XPATH, "//div[contains(@class, 'clp-lead__element-item--row')]/a/span[2]").text;
+    print("The value of the courseReviewCounts is " + courseReviewCounts, "\n\n\n\n");
+    automationResultDict["Course Review Count"] = courseReviewCounts;
 
-
-    # waitTime = randrange(10);
-    # print("Waiting for ", waitTime);
-    # time.sleep(waitTime);
 
 
     #WRITING THE CODE TO FETCH THE COURSE RATING 
@@ -117,7 +102,6 @@ def FetchDataByAutomation(wait, driver, automationResultDict, courseLink):
     print("The value of courseRatings is: " + courseRatings, "\n\n\n\n");
     automationResultDict["Course Rating"] = courseRatings;
 
-    # driver.find_element_by_tag_name('body').send_keys(Keys.COMMAND + 'w') 
 
 
 
@@ -136,12 +120,37 @@ def FetchDataByAutomation(wait, driver, automationResultDict, courseLink):
 
     # driver.close();
     print("The value of courseDuration is " + courseDuration);
-    automationResultDict["Course Duration"] = courseDuration;
+    automationResultDict["Course Length"] = courseDuration;
 
 
 
 
+def UpdateAutomationResultInDataFrame(dataFrame, automationResultDict, currIndex):
+    print("The value of the currentIndex is as follows \n\n", currIndex);
+    # using the for loop for this purpose 
+    for column in dataFrame.columns:
+        if(column == "Course URL" or column == "Course Type" or column == "#" or column == "Name" or column == "Course Name"):
+            continue;
+        dataFrame.at[currIndex, column] = automationResultDict[column]
+    # for column in dataFrame.columns:
+    #     print(column);
 
+    # say everything went fine 
+    return;
+
+
+
+def PrintDataFrameValue(dataFrame):
+    # using the for loop for this purpose 
+    for row in dataFrame.iterrows():
+        print(row);
+
+
+
+def StoreResultIntoExcel(dataFrame):
+    dataFrame.to_excel("OutputFile.xlsx", index = False)
+    # say everything went fine 
+    return;
 
 
 def main():
@@ -149,7 +158,9 @@ def main():
     dataFrame = ReadExcelSheet()
     courseLinkList = GetAllCourseLinks(dataFrame)
     wait = WebDriverWait(driver, 10);
-    for courseLink in courseLinkList:
+
+
+    for currIndex,  courseLink in enumerate(courseLinkList):
         automationResultDict = InitializeAutomationResultDict()
         waitTime = randrange(10);
         print("Waiting for ", waitTime);
@@ -161,6 +172,14 @@ def main():
         print("The final result of the automation runned for courseLink is as follows: \n\n", automationResultDict);
         # driver.close();
 
+        # here we have to update the value of the dataFrame with whatever results we have got for this purpose 
+        UpdateAutomationResultInDataFrame(dataFrame, automationResultDict, currIndex)
+        # print("PRINTING THE UPDATED VALUE OF THE DATAFRAME FOR THIS PURPOSE \n\n");
+        # PrintDataFrameValue(dataFrame);
+        # break;
+
+    # after this we have to store these values inside the new excel sheet for this purpose 
+    StoreResultIntoExcel(dataFrame);
     driver.quit();
     return;
 
