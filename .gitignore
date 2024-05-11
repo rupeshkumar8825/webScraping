@@ -121,6 +121,9 @@ celerybeat.pid
 # SageMath parsed files
 *.sage.py
 
+# Application Files 
+DataFile.xlsx
+Template_competition_analytics.xlsx
 # Environments
 .env
 .venv
