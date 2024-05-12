@@ -1,0 +1,12 @@
+InstructorName = "Name";
+CourseName = "Course Name";
+CourseURL = "Course URL"
+CourseType = "Course Type"
+CourseUpdateDate = "Update Date";
+CourseSaleCount = "Course Sale Count"
+CourseReviewCount = "Course Review Count"
+CourseRating = "Course Rating"
+CourseLength = "Course Length"
+CourseLastUpdatedDate = "Course Last Updated Date"
+PracticeTest = "Practice Test"
+VideoCourse = "Video Course"
