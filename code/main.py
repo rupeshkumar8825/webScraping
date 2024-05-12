@@ -13,9 +13,13 @@ import excelService as excelService;
 import pandas as pd;
 import stringConstants as stringConstants;
 import loggerService as loggerService
+from datetime import date
+
 
 from random import randrange;
 
+
+logger = None;
 
 
 
@@ -36,12 +40,13 @@ def GetAllCourseLinks(currDataFrame):
 
 
 
+
 def main():
     try:
-        driver = automationService.InitializeChromeDriver()
-        dataFrame = excelService.ReadExcelSheet()
+        print("started ")
         logger = loggerService.InitializeLoggingService();
-        logger.info("Started the execution of the code for this purpose \n");
+        driver = automationService.InitializeChromeDriver(logger)
+        dataFrame = excelService.ReadExcelSheet()
         dataFrame[stringConstants.CourseUpdateDate] = dataFrame[stringConstants.CourseUpdateDate].astype(str)
         dataFrame[stringConstants.CourseSaleCount] = dataFrame[stringConstants.CourseSaleCount].astype(str)
         dataFrame[stringConstants.CourseReviewCount] = dataFrame[stringConstants.CourseReviewCount].astype(str)
@@ -50,28 +55,28 @@ def main():
         dataFrame[stringConstants.CourseLastUpdatedDate] = dataFrame[stringConstants.CourseLastUpdatedDate].astype(str)
 
 
-
         courseLinkList = GetAllCourseLinks(dataFrame)
         wait = WebDriverWait(driver, 10);
 
 
         for currIndex,  courseLink in enumerate(courseLinkList):
-            automationResultDict = automationService.InitializeAutomationResultDict()
-            automationService.FetchDataByAutomation(wait, driver, automationResultDict, courseLink)
+            automationResultDict = automationService.InitializeAutomationResultDict(logger)
+            automationService.FetchDataByAutomation(wait, driver, automationResultDict, courseLink, logger)
             automationService.UpdateAutomationResultInDataFrame(dataFrame, automationResultDict, currIndex)
-            print("the final result after running the automation is as follows \n", automationResultDict)
-            break;
 
 
-        # excelService.StoreResultIntoExcel(dataFrame);
-    except WebDriverException:
-        print('Selenium error occurred') 
+        excelService.StoreResultIntoExcel(dataFrame, logger);
+    except WebDriverException as e:
+        logger.error("An WebDriverException occurred %s", str(e), exc_info=True)
+    except Exception as e:
+        logger.error("An Unknown Exception occurred %s", str(e), exc_info=True)
     finally : 
+        logger.info("Quiting the chrome driver.")
         driver.quit();
 
     return;
 
 
-
 if __name__ == "__main__":
     main()
+

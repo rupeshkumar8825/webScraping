@@ -1,7 +1,12 @@
 import logging
+from datetime import date 
+
+
+
 
 def InitializeLoggingService():
-    logFilePath = "../output/logs/automationLog.log"
+
+    logFilePath = f"../output/logs/automationLog_{date.today()}.log"
     
     log_format = "%(asctime)s - %(levelname)s - %(module)s - %(lineno)d - %(message)s"
     date_format = "%Y-%m-%d %H:%M:%S"

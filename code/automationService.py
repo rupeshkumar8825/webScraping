@@ -7,18 +7,25 @@ from selenium.webdriver.support import expected_conditions as expectedConditions
 from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import *
 import stringConstants as stringConstants
+import loggerService as loggerService
 
 
 
+def InitializeChromeDriver(logger):
+    logger.info("Driver Initialization -- Started")
 
-def InitializeChromeDriver():
     service = Service(executable_path="/usr/bin/chromedriver");
     driver = uc.Chrome(service=service);
+
+    logger.info("Driver Initialization -- Done")
     return driver;
 
 
 
-def InitializeAutomationResultDict():
+def InitializeAutomationResultDict(logger):
+    # logger = loggerService.GetLoggerInstance();
+    logger.info("automationResultDict Initialization Started");    
+    
     automationResultDict = {}
     automationResultDict[stringConstants.CourseUpdateDate] = None
     automationResultDict[stringConstants.CourseSaleCount] = None
@@ -26,6 +33,8 @@ def InitializeAutomationResultDict():
     automationResultDict[stringConstants.CourseRating] = None
     automationResultDict[stringConstants.CourseLength] = None
     automationResultDict[stringConstants.CourseLastUpdatedDate] = None
+
+    logger.info('automationResultDict Initialization Done');
 
     return automationResultDict;
 
@@ -46,14 +55,17 @@ def UpdateAutomationResultInDataFrame(dataFrame, automationResultDict, currIndex
 
 
 
-def FetchDataByAutomation(wait, driver, automationResultDict, courseLink):
+def FetchDataByAutomation(wait, driver, automationResultDict, courseLink, logger):
+    logger.info("Automation Started")
+
     driver.get(courseLink[0]);
     courseType = courseLink[1].strip();
     
 
-    try: 
-            
-        # WRITING THE AUTOMATION CODE TO FETCH THE LAST UPDATED VALUE OF THE COURSE 
+    # WRITING THE AUTOMATION CODE TO FETCH THE LAST UPDATED VALUE OF THE COURSE 
+    try:
+
+        logger.info(f"GET {stringConstants.CourseLastUpdatedDate} -- STARTED")        
         wait.until(
             expectedConditions.presence_of_element_located((By.CLASS_NAME, "last-update-date"))
         );
@@ -61,14 +73,21 @@ def FetchDataByAutomation(wait, driver, automationResultDict, courseLink):
         # parsing the result for this purpose 
         lastUpdatedCourseDate = "01/" + lastUpdatedCourseDate.split(" ")[2];
         automationResultDict[stringConstants.CourseLastUpdatedDate] = lastUpdatedCourseDate;
-    except NoSuchElementException:
-        print("ELEMENT NOT FOUND \n\n\n\n");
-    except TimeoutException:
-        print("TimeOut Occurred");
+        logger.info(f"GET  {stringConstants.CourseLastUpdatedDate} -- SUCCESS")
 
+    except NoSuchElementException as e:
+        logger.error("An NoSuchEelementException occurred : %s", str(e), exc_info=True)
+    except TimeoutException as e:
+        logger.exception("An TimeoutException occurred : %s", str(e), exc_info=True)
+    except Exception as e:
+        logger.error("An unknown Exception occurred %s", str(e), exc_info=True)
+
+
+
+
+    #WRITING THE CODE TO FETCH THE VALUE OF COURSE SALE COUNT 
     try:
-            
-        #WRITING THE CODE TO FETCH THE VALUE OF COURSE SALE COUNT 
+        logger.info(f"GET {stringConstants.CourseSaleCount} -- STARTED")
         wait.until(
             expectedConditions.presence_of_element_located((By.CLASS_NAME, "enrollment"))
         );
@@ -77,15 +96,23 @@ def FetchDataByAutomation(wait, driver, automationResultDict, courseLink):
         parsedStringArray = courseSaleCount.split(" ");
         courseSaleCount = parsedStringArray[0];
         automationResultDict[stringConstants.CourseSaleCount] = courseSaleCount;
-    except NoSuchElementException:
-        print("ELEMENT NOT FOUND \n\n\n\n");
-    except TimeoutException:
-        print("TimeOut Occurred");
+
+        logger.info(f"GET {stringConstants.CourseSaleCount} -- SUCCESS")
+
+    except NoSuchElementException as e:
+        logger.error("An NoSuchEelementException occurred : %s", str(e), exc_info=True)
+    except TimeoutException as e:
+        logger.exception("An TimeoutException occurred : %s", str(e), exc_info=True)
+    except Exception as e:
+        logger.error("An unknown Exception occurred %s", str(e), exc_info=True)
 
 
+
+
+    #WRITING THE CODE TO FETCH THE COURSE REVIEW COUNT 
     try:
+        logger.info(f"GET {stringConstants.CourseReviewCount} -- STARTED")
         
-        #WRITING THE CODE TO FETCH THE COURSE REVIEW COUNT 
         wait.until(
             expectedConditions.presence_of_element_located((By.XPATH, "//div[contains(@class, 'clp-lead__element-item--row')]/a/span[2]"))
         );
@@ -93,29 +120,46 @@ def FetchDataByAutomation(wait, driver, automationResultDict, courseLink):
         parseString = courseReviewCounts.split(" ")[0];
         courseReviewCounts = parseString.split("(")[1];
         automationResultDict[stringConstants.CourseReviewCount] = courseReviewCounts;
-    except NoSuchElementException:
-        print("ELEMENT NOT FOUND\n\n");
-    except TimeoutException:
-        print("TimeOut Occurred");
 
+        logger.info(f"GET  {stringConstants.CourseReviewCount} -- SUCCESS")
+
+    except NoSuchElementException as e:
+        logger.error("An NoSuchEelementException occurred : %s", str(e), exc_info=True)
+    except TimeoutException as e:
+        logger.exception("An TimeoutException occurred : %s", str(e), exc_info=True)
+    except Exception as e:
+        logger.error("An unknown Exception occurred %s", str(e), exc_info=True)
+
+
+
+
+    #WRITING THE CODE TO FETCH THE COURSE RATING 
     try:
+        logger.info(f"GET {stringConstants.CourseRating} -- STARTED")
 
-        #WRITING THE CODE TO FETCH THE COURSE RATING 
         wait.until(
             expectedConditions.presence_of_element_located((By.XPATH, "//div[contains(@class, 'clp-lead__element-item--row')]/a/span[1]/span[2]"))
         );
         courseRatings = driver.find_element(By.XPATH, "//div[contains(@class, 'clp-lead__element-item--row')]/a/span[1]/span[2]").text;
         automationResultDict[stringConstants.CourseRating] = courseRatings;
-    except NoSuchElementException:
-        print("ELEMENT NOT FOUND \n\n\n\n");
-    except TimeoutException:
-        print("TimeOut Occurred");
+
+        logger.info(f"GET  {stringConstants.CourseRating} -- SUCCESS")
+
+    except NoSuchElementException as e:
+        logger.error("An NoSuchEelementException occurred : %s", str(e), exc_info=True)
+    except TimeoutException as e:
+        logger.exception("An TimeoutException occurred : %s", str(e), exc_info=True)
+    except Exception as e:
+        logger.error("An unknown Exception occurred %s", str(e), exc_info=True)
 
 
 
+
+    #CODE TO FETCH THE COURSEDURATION OR TOTAL NUMBER OF TESTS FOR THIS PURPOSE 
     try : 
 
-        #CODE TO FETCH THE COURSEDURATION OR TOTAL NUMBER OF TESTS FOR THIS PURPOSE 
+        logger.info(f"GET {stringConstants.CourseLength} -- STARTED")
+
         if(courseType == stringConstants.PracticeTest):
             # then we have to fetch the value of the total number of questions in the test 
             wait.until(
@@ -130,7 +174,21 @@ def FetchDataByAutomation(wait, driver, automationResultDict, courseLink):
         parsedStringArray = courseDuration.split(" ");
         courseDuration = parsedStringArray[0] + " " + parsedStringArray[1];
         automationResultDict[stringConstants.CourseLength] = courseDuration;
-    except NoSuchElementException:
-        print("ELEMENT NOT FOUND \n\n\n\n");
-    except TimeoutException:
-        print("TimeOut Occurred");
+
+        logger.info(f"GET  {stringConstants.CourseLength} -- SUCCESS")
+
+    except NoSuchElementException as e:
+        logger.error("An NoSuchEelementException occurred : %s", str(e), exc_info=True)
+    except TimeoutException as e:
+        logger.exception("An TimeoutException occurred : %s", str(e), exc_info=True)
+    except Exception as e:
+        logger.error("An unknown Exception occurred %s", str(e), exc_info=True)
+
+    
+    logger.info("Automation Ended")
+    return;
+
+
+
+
+
