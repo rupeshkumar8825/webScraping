@@ -7,6 +7,7 @@ from selenium.webdriver.support.ui import WebDriverWait;
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support import expected_conditions as expectedConditions;
 from selenium.webdriver.common.keys import Keys
+from selenium.common.exceptions import *
 import automationService as automationService;
 import excelService as excelService;
 import pandas as pd;
@@ -35,32 +36,36 @@ def GetAllCourseLinks(currDataFrame):
 
 
 def main():
-    driver = automationService.InitializeChromeDriver()
-    dataFrame = excelService.ReadExcelSheet()
+    try:
+        driver = automationService.InitializeChromeDriver()
+        dataFrame = excelService.ReadExcelSheet()
 
-    dataFrame[stringConstants.CourseUpdateDate] = dataFrame[stringConstants.CourseUpdateDate].astype(str)
-    dataFrame[stringConstants.CourseSaleCount] = dataFrame[stringConstants.CourseSaleCount].astype(str)
-    dataFrame[stringConstants.CourseReviewCount] = dataFrame[stringConstants.CourseReviewCount].astype(str)
-    dataFrame[stringConstants.CourseRating] = dataFrame[stringConstants.CourseRating].astype(str)
-    dataFrame[stringConstants.CourseLength] = dataFrame[stringConstants.CourseLength].astype(str)
-    dataFrame[stringConstants.CourseLastUpdatedDate] = dataFrame[stringConstants.CourseLastUpdatedDate].astype(str)
-
-
-
-    courseLinkList = GetAllCourseLinks(dataFrame)
-    wait = WebDriverWait(driver, 10);
+        dataFrame[stringConstants.CourseUpdateDate] = dataFrame[stringConstants.CourseUpdateDate].astype(str)
+        dataFrame[stringConstants.CourseSaleCount] = dataFrame[stringConstants.CourseSaleCount].astype(str)
+        dataFrame[stringConstants.CourseReviewCount] = dataFrame[stringConstants.CourseReviewCount].astype(str)
+        dataFrame[stringConstants.CourseRating] = dataFrame[stringConstants.CourseRating].astype(str)
+        dataFrame[stringConstants.CourseLength] = dataFrame[stringConstants.CourseLength].astype(str)
+        dataFrame[stringConstants.CourseLastUpdatedDate] = dataFrame[stringConstants.CourseLastUpdatedDate].astype(str)
 
 
-    for currIndex,  courseLink in enumerate(courseLinkList):
-        automationResultDict = automationService.InitializeAutomationResultDict()
-        automationService.FetchDataByAutomation(wait, driver, automationResultDict, courseLink)
-        automationService.UpdateAutomationResultInDataFrame(dataFrame, automationResultDict, currIndex)
-        print("the final result after running the automation is as follows \n", automationResultDict);
+
+        courseLinkList = GetAllCourseLinks(dataFrame)
+        wait = WebDriverWait(driver, 10);
 
 
-    excelService.StoreResultIntoExcel(dataFrame);
+        for currIndex,  courseLink in enumerate(courseLinkList):
+            automationResultDict = automationService.InitializeAutomationResultDict()
+            automationService.FetchDataByAutomation(wait, driver, automationResultDict, courseLink)
+            automationService.UpdateAutomationResultInDataFrame(dataFrame, automationResultDict, currIndex)
+            print("the final result after running the automation is as follows \n", automationResultDict)
+            break;
 
-    driver.quit();
+
+        # excelService.StoreResultIntoExcel(dataFrame);
+    except WebDriverException:
+        print('Selenium error occurred') 
+    finally : 
+        driver.quit();
 
     return;
 
