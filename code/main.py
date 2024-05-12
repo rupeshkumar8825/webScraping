@@ -12,6 +12,7 @@ import automationService as automationService;
 import excelService as excelService;
 import pandas as pd;
 import stringConstants as stringConstants;
+import loggerService as loggerService
 
 from random import randrange;
 
@@ -39,7 +40,8 @@ def main():
     try:
         driver = automationService.InitializeChromeDriver()
         dataFrame = excelService.ReadExcelSheet()
-
+        logger = loggerService.InitializeLoggingService();
+        logger.info("Started the execution of the code for this purpose \n");
         dataFrame[stringConstants.CourseUpdateDate] = dataFrame[stringConstants.CourseUpdateDate].astype(str)
         dataFrame[stringConstants.CourseSaleCount] = dataFrame[stringConstants.CourseSaleCount].astype(str)
         dataFrame[stringConstants.CourseReviewCount] = dataFrame[stringConstants.CourseReviewCount].astype(str)
