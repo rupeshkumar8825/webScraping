@@ -36,6 +36,15 @@ def GetAllCourseLinks(currDataFrame):
 
 
 
+def GetAllCourseNames(currDataFrame):
+    courseNameList = []
+    for currIndex, currRow in currDataFrame.iterrows():
+        for column in currDataFrame.columns:
+            if(column == stringConstants.CourseName):
+                courseNameList.append(currRow[column])
+
+    return courseNameList;
+
 
 
 
@@ -56,12 +65,15 @@ def main():
 
 
         courseLinkList = GetAllCourseLinks(dataFrame)
+        courseNameList = GetAllCourseNames(dataFrame)
+        print("the value of the list of courseName is as follows \n", courseNameList)
         wait = WebDriverWait(driver, 10);
 
 
         for currIndex,  courseLink in enumerate(courseLinkList):
             automationResultDict = automationService.InitializeAutomationResultDict(logger)
-            automationService.FetchDataByAutomation(wait, driver, automationResultDict, courseLink, logger)
+            currCourseName = courseNameList[currIndex];
+            automationService.FetchDataByAutomation(wait, driver, automationResultDict, courseLink, currCourseName, logger)
             automationService.UpdateAutomationResultInDataFrame(dataFrame, automationResultDict, currIndex)
 
 

@@ -55,8 +55,8 @@ def UpdateAutomationResultInDataFrame(dataFrame, automationResultDict, currIndex
 
 
 
-def FetchDataByAutomation(wait, driver, automationResultDict, courseLink, logger):
-    logger.info("Automation Started")
+def FetchDataByAutomation(wait, driver, automationResultDict, courseLink, currCourseName, logger):
+    logger.info(f"Automation Started for {currCourseName}\n\n")
 
     driver.get(courseLink[0]);
     courseType = courseLink[1].strip();
@@ -65,7 +65,7 @@ def FetchDataByAutomation(wait, driver, automationResultDict, courseLink, logger
     # WRITING THE AUTOMATION CODE TO FETCH THE LAST UPDATED VALUE OF THE COURSE 
     try:
 
-        logger.info(f"GET {stringConstants.CourseLastUpdatedDate} -- STARTED")        
+        logger.info(f"GET {stringConstants.CourseLastUpdatedDate} -- STARTED\n")        
         wait.until(
             expectedConditions.presence_of_element_located((By.CLASS_NAME, "last-update-date"))
         );
@@ -73,7 +73,7 @@ def FetchDataByAutomation(wait, driver, automationResultDict, courseLink, logger
         # parsing the result for this purpose 
         lastUpdatedCourseDate = "01/" + lastUpdatedCourseDate.split(" ")[2];
         automationResultDict[stringConstants.CourseLastUpdatedDate] = lastUpdatedCourseDate;
-        logger.info(f"GET  {stringConstants.CourseLastUpdatedDate} -- SUCCESS")
+        logger.info(f"GET  {stringConstants.CourseLastUpdatedDate} -- SUCCESS\n\n")
 
     except NoSuchElementException as e:
         logger.error("An NoSuchEelementException occurred : %s", str(e), exc_info=True)
@@ -87,17 +87,17 @@ def FetchDataByAutomation(wait, driver, automationResultDict, courseLink, logger
 
     #WRITING THE CODE TO FETCH THE VALUE OF COURSE SALE COUNT 
     try:
-        logger.info(f"GET {stringConstants.CourseSaleCount} -- STARTED")
+        logger.info(f"GET {stringConstants.CourseSaleCount} -- STARTED\n")
         wait.until(
             expectedConditions.presence_of_element_located((By.CLASS_NAME, "enrollment"))
         );
-        courseSaleCount = driver.find_element(By.CLASS_NAME, "enrollments").text;
+        courseSaleCount = driver.find_element(By.CLASS_NAME, "enrollment").text;
         # parsing the result here for this purpose (removing the comma into this for this purpose)
         parsedStringArray = courseSaleCount.split(" ");
         courseSaleCount = parsedStringArray[0];
         automationResultDict[stringConstants.CourseSaleCount] = courseSaleCount;
 
-        logger.info(f"GET {stringConstants.CourseSaleCount} -- SUCCESS")
+        logger.info(f"GET {stringConstants.CourseSaleCount} -- SUCCESS\n\n")
 
     except NoSuchElementException as e:
         logger.error("An NoSuchEelementException occurred : %s", str(e), exc_info=True)
@@ -111,7 +111,7 @@ def FetchDataByAutomation(wait, driver, automationResultDict, courseLink, logger
 
     #WRITING THE CODE TO FETCH THE COURSE REVIEW COUNT 
     try:
-        logger.info(f"GET {stringConstants.CourseReviewCount} -- STARTED")
+        logger.info(f"GET {stringConstants.CourseReviewCount} -- STARTED\n")
         
         wait.until(
             expectedConditions.presence_of_element_located((By.XPATH, "//div[contains(@class, 'clp-lead__element-item--row')]/a/span[2]"))
@@ -121,7 +121,7 @@ def FetchDataByAutomation(wait, driver, automationResultDict, courseLink, logger
         courseReviewCounts = parseString.split("(")[1];
         automationResultDict[stringConstants.CourseReviewCount] = courseReviewCounts;
 
-        logger.info(f"GET  {stringConstants.CourseReviewCount} -- SUCCESS")
+        logger.info(f"GET  {stringConstants.CourseReviewCount} -- SUCCESS\n\n")
 
     except NoSuchElementException as e:
         logger.error("An NoSuchEelementException occurred : %s", str(e), exc_info=True)
@@ -135,7 +135,7 @@ def FetchDataByAutomation(wait, driver, automationResultDict, courseLink, logger
 
     #WRITING THE CODE TO FETCH THE COURSE RATING 
     try:
-        logger.info(f"GET {stringConstants.CourseRating} -- STARTED")
+        logger.info(f"GET {stringConstants.CourseRating} -- STARTED\n")
 
         wait.until(
             expectedConditions.presence_of_element_located((By.XPATH, "//div[contains(@class, 'clp-lead__element-item--row')]/a/span[1]/span[2]"))
@@ -143,7 +143,7 @@ def FetchDataByAutomation(wait, driver, automationResultDict, courseLink, logger
         courseRatings = driver.find_element(By.XPATH, "//div[contains(@class, 'clp-lead__element-item--row')]/a/span[1]/span[2]").text;
         automationResultDict[stringConstants.CourseRating] = courseRatings;
 
-        logger.info(f"GET  {stringConstants.CourseRating} -- SUCCESS")
+        logger.info(f"GET  {stringConstants.CourseRating} -- SUCCESS\n\n")
 
     except NoSuchElementException as e:
         logger.error("An NoSuchEelementException occurred : %s", str(e), exc_info=True)
@@ -158,7 +158,7 @@ def FetchDataByAutomation(wait, driver, automationResultDict, courseLink, logger
     #CODE TO FETCH THE COURSEDURATION OR TOTAL NUMBER OF TESTS FOR THIS PURPOSE 
     try : 
 
-        logger.info(f"GET {stringConstants.CourseLength} -- STARTED")
+        logger.info(f"GET {stringConstants.CourseLength} -- STARTED\n")
 
         if(courseType == stringConstants.PracticeTest):
             # then we have to fetch the value of the total number of questions in the test 
@@ -175,7 +175,7 @@ def FetchDataByAutomation(wait, driver, automationResultDict, courseLink, logger
         courseDuration = parsedStringArray[0] + " " + parsedStringArray[1];
         automationResultDict[stringConstants.CourseLength] = courseDuration;
 
-        logger.info(f"GET  {stringConstants.CourseLength} -- SUCCESS")
+        logger.info(f"GET  {stringConstants.CourseLength} -- SUCCESS\n\n")
 
     except NoSuchElementException as e:
         logger.error("An NoSuchEelementException occurred : %s", str(e), exc_info=True)
@@ -185,7 +185,7 @@ def FetchDataByAutomation(wait, driver, automationResultDict, courseLink, logger
         logger.error("An unknown Exception occurred %s", str(e), exc_info=True)
 
     
-    logger.info("Automation Ended")
+    logger.info(f"Automation Ended for {currCourseName}\n\n\n")
     return;
 
 
