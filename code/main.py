@@ -37,7 +37,7 @@ def GetAllCourseLinks(currDataFrame):
 def main():
     driver = automationService.InitializeChromeDriver()
     dataFrame = excelService.ReadExcelSheet()
-    
+
     dataFrame[stringConstants.CourseUpdateDate] = dataFrame[stringConstants.CourseUpdateDate].astype(str)
     dataFrame[stringConstants.CourseSaleCount] = dataFrame[stringConstants.CourseSaleCount].astype(str)
     dataFrame[stringConstants.CourseReviewCount] = dataFrame[stringConstants.CourseReviewCount].astype(str)
@@ -55,6 +55,7 @@ def main():
         automationResultDict = automationService.InitializeAutomationResultDict()
         automationService.FetchDataByAutomation(wait, driver, automationResultDict, courseLink)
         automationService.UpdateAutomationResultInDataFrame(dataFrame, automationResultDict, currIndex)
+        print("the final result after running the automation is as follows \n", automationResultDict);
 
 
     excelService.StoreResultIntoExcel(dataFrame);
