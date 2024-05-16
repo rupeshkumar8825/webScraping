@@ -8,14 +8,41 @@ from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import *
 import stringConstants as stringConstants
 import loggerService as loggerService
+from enum import Enum
+from datetime import datetime
 
+
+
+# Define the enumeration for months
+class Month(Enum):
+    Jan = 1
+    Feb = 2
+    Mar = 3
+    Apr = 4
+    May = 5
+    Jun = 6
+    Jul = 7
+    Aug = 8
+    Sep = 9
+    Oct = 10
+    Nov = 11
+    Dec = 12
+
+
+# Define a function to get the month name from the month number
+def get_month_name(month_number):
+    try:
+        return Month(month_number).name
+    except ValueError:
+        return "Invalid month number"
 
 
 def InitializeChromeDriver(logger):
     logger.info("Driver Initialization -- Started")
 
-    service = Service(executable_path="/usr/bin/chromedriver");
-    driver = uc.Chrome(service=service);
+    # service = Service(executable_path="/usr/bin/chromedriver");
+    # uc.TARGET_VERSION = 124
+    driver = uc.Chrome(version_main=124);
 
     logger.info("Driver Initialization -- Done")
     return driver;
@@ -23,8 +50,6 @@ def InitializeChromeDriver(logger):
 
 
 def InitializeAutomationResultDict(logger):
-    # logger = loggerService.GetLoggerInstance();
-    logger.info("automationResultDict Initialization Started");    
     
     automationResultDict = {}
     automationResultDict[stringConstants.CourseUpdateDate] = None
@@ -71,7 +96,11 @@ def FetchDataByAutomation(wait, driver, automationResultDict, courseLink, currCo
         );
         lastUpdatedCourseDate = driver.find_element(By.CLASS_NAME, "last-update-date").text;
         # parsing the result for this purpose 
-        lastUpdatedCourseDate = "01/" + lastUpdatedCourseDate.split(" ")[2];
+        splitLastUpdatedCourseDate = lastUpdatedCourseDate.split(" ")[2];
+        monthInNumber = splitLastUpdatedCourseDate.split("/")[0];
+        year = splitLastUpdatedCourseDate.split("/")[1];
+        monthInString = get_month_name(int(monthInNumber));
+        lastUpdatedCourseDate = "01-" + monthInString + f"-{year}";
         automationResultDict[stringConstants.CourseLastUpdatedDate] = lastUpdatedCourseDate;
         logger.info(f"GET  {stringConstants.CourseLastUpdatedDate} -- SUCCESS\n\n")
 
@@ -166,11 +195,13 @@ def FetchDataByAutomation(wait, driver, automationResultDict, courseLink, currCo
                 expectedConditions.presence_of_element_located((By.XPATH, "//div[contains(@data-purpose, 'curriculum-stats')]/span[1]"))
             );
             courseDuration = driver.find_element(By.XPATH, "//div[contains(@data-purpose, 'curriculum-stats')]/span[1]").text;
+
         elif(courseType == stringConstants.VideoCourse): 
             wait.until(
                 expectedConditions.presence_of_element_located((By.XPATH, "//div[contains(@data-purpose, 'curriculum-stats')]/span[1]/span[1]"))
             );
             courseDuration = driver.find_element(By.XPATH, "//div[contains(@data-purpose, 'curriculum-stats')]/span[1]/span[1]").text;
+
         parsedStringArray = courseDuration.split(" ");
         courseDuration = parsedStringArray[0] + " " + parsedStringArray[1];
         automationResultDict[stringConstants.CourseLength] = courseDuration;
@@ -184,7 +215,8 @@ def FetchDataByAutomation(wait, driver, automationResultDict, courseLink, currCo
     except Exception as e:
         logger.error("An unknown Exception occurred %s", str(e), exc_info=True)
 
-    
+    automationResultDict[stringConstants.CourseUpdateDate] =  (datetime.now().date()).strftime("%d-%m-%Y");
+
     logger.info(f"Automation Ended for {currCourseName}\n\n\n")
     return;
 

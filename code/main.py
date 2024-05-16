@@ -14,6 +14,7 @@ import pandas as pd;
 import stringConstants as stringConstants;
 import loggerService as loggerService
 from datetime import date
+from enum import Enum
 
 
 from random import randrange;
@@ -67,13 +68,20 @@ def main():
         courseLinkList = GetAllCourseLinks(dataFrame)
         courseNameList = GetAllCourseNames(dataFrame)
         print("the value of the list of courseName is as follows \n", courseNameList)
-        wait = WebDriverWait(driver, 10);
+        wait = WebDriverWait(driver, 15);
 
 
         for currIndex,  courseLink in enumerate(courseLinkList):
             automationResultDict = automationService.InitializeAutomationResultDict(logger)
             currCourseName = courseNameList[currIndex];
-            automationService.FetchDataByAutomation(wait, driver, automationResultDict, courseLink, currCourseName, logger)
+            # if(currCourseName == None or courseLink == None):
+            #     continue;
+            try:
+                automationService.FetchDataByAutomation(wait, driver, automationResultDict, courseLink, currCourseName, logger)
+            except Exception as e:
+                logger.error("An Unknown Exception occurred %s", str(e), exc_info=True);
+                logger.info(f"Automation Ended for {currCourseName}\n\n\n")
+                continue;    
             automationService.UpdateAutomationResultInDataFrame(dataFrame, automationResultDict, currIndex)
 
 
