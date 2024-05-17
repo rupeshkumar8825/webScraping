@@ -67,7 +67,7 @@ def main():
 
         courseLinkList = GetAllCourseLinks(dataFrame)
         courseNameList = GetAllCourseNames(dataFrame)
-        print("the value of the list of courseName is as follows \n", courseNameList)
+        # print("the value of the list of courseName is as follows \n", courseNameList)
         wait = WebDriverWait(driver, 15);
 
 
