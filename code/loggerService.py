@@ -3,10 +3,10 @@ from datetime import datetime
 
 
 
-
 def InitializeLoggingService():
-
-    logFilePath = f"../output/logs/automationLog_{datetime.now()}.log"
+    currDateTime = datetime.now();
+    currDateTime = currDateTime.isoformat(sep="_")
+    logFilePath = f"../output/logs/automationLog_{currDateTime}.log"
     
     log_format = "%(asctime)s - %(levelname)s - %(module)s - %(lineno)d - %(message)s"
     date_format = "%Y-%m-%d %H:%M:%S"
