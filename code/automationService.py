@@ -217,7 +217,12 @@ def FetchDataByAutomation(wait, driver, automationResultDict, courseLink, currCo
     except Exception as e:
         logger.error("An unknown Exception occurred %s", str(e), exc_info=True)
 
-    automationResultDict[stringConstants.CourseUpdateDate] =  (datetime.now().date()).strftime("%d-%m-%Y");
+    currDateTime = datetime.now().date();
+    currDate = currDateTime.day;
+    currMonthInNumbers = currDateTime.month;
+    currYear = currDateTime.year;
+    currMonthInWords = get_month_name(int(currMonthInNumbers));
+    automationResultDict[stringConstants.CourseUpdateDate] =  f"{currDate}-{currMonthInWords}-{currYear}"
 
     logger.info(f"Automation Ended for {currCourseName}\n\n\n")
     return;
