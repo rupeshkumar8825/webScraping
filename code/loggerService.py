@@ -10,7 +10,7 @@ def InitializeLoggingService():
     
     output_dir = "../output/logs";
     os.makedirs(output_dir, exist_ok=True)
-    logFilePath = os.path.join(output_dir, f"automationLog_{formatted_date}.log");
+    logFilePath = os.path.join(output_dir, f"Competition_analytics_logs_{formatted_date}.log");
 
     log_format = "%(asctime)s - %(levelname)s - %(module)s - %(lineno)d - %(message)s"
     date_format = "%Y-%m-%d %H:%M:%S"

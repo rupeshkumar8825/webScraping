@@ -22,7 +22,7 @@ def StoreResultIntoExcel(dataFrame, logger):
     formatted_date = currDateTime.strftime("%Y-%m-%d_%H-%M-%S")
     output_dir = "../output";
     os.makedirs(output_dir, exist_ok=True)
-    excelFilePath = os.path.join(output_dir, f"Competition_analytics{formatted_date}.xlsx");
+    excelFilePath = os.path.join(output_dir, f"Competition_analytics_result_{formatted_date}.xlsx");
     dataFrame.to_excel(excelFilePath, index = False)
 
     logger.info("Store result in Excel -- Done");
