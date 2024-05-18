@@ -84,7 +84,7 @@ def main():
                 continue;    
             automationService.UpdateAutomationResultInDataFrame(dataFrame, automationResultDict, currIndex)
 
-
+        # the final value of the dataframe is as follows : 
         excelService.StoreResultIntoExcel(dataFrame, logger);
     except WebDriverException as e:
         logger.error("An WebDriverException occurred %s", str(e), exc_info=True)

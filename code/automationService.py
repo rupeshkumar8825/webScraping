@@ -73,7 +73,9 @@ def UpdateAutomationResultInDataFrame(dataFrame, automationResultDict, currIndex
         if(column == stringConstants.CourseURL or column == stringConstants.CourseType or column == "#" or column == stringConstants.InstructorName or column == stringConstants.CourseName):
             continue;
         dataFrame.at[currIndex, column] = automationResultDict[column]
-   
+    
+    # print("the finale value of the automation result is as follows \n\n\n",automationResultDict);
+    # print("\n\n\n");
     return;
 
 

@@ -1,4 +1,5 @@
 import pandas as pd
+import os 
 import loggerService as loggerService
 from datetime import datetime
 
@@ -17,8 +18,12 @@ def PrintDataFrameValue(dataFrame):
 
 def StoreResultIntoExcel(dataFrame, logger):
     logger.info("Store result in Excel -- Started");
-
-    dataFrame.to_excel(f"../output/automationResult_{datetime.now()}.xlsx", index = False)
+    currDateTime = datetime.now();
+    formatted_date = currDateTime.strftime("%Y-%m-%d_%H-%M-%S")
+    output_dir = "../output";
+    os.makedirs(output_dir, exist_ok=True)
+    excelFilePath = os.path.join(output_dir, f"Competition_analytics{formatted_date}.xlsx");
+    dataFrame.to_excel(excelFilePath, index = False)
 
     logger.info("Store result in Excel -- Done");
     # say everything went fine 

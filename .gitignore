@@ -131,7 +131,8 @@ venv/
 ENV/
 env.bak/
 venv.bak/
-web_automation_venv
+venv_name
+.vscode
 
 # Spyder project settings
 .spyderproject
